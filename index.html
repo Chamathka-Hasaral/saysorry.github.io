@@ -64,7 +64,7 @@
         }
         button { 
             padding: 8px 16px; 
-            font-size: 14px; 
+            font-size: 14px;
         }
         #thankyou { 
             font-size: 20px; 
@@ -84,11 +84,13 @@
     let initialNoPosition = {left: noButton.offsetLeft, top: noButton.offsetTop};
 
     function moveButton() {
-        let newX, newY;
+        let newX, newY, maxAttempts = 10, attempts = 0;
         do {
             newX = initialNoPosition.left + (Math.random() * 100 - 50); // Close range movement
             newY = initialNoPosition.top + (Math.random() * 100 - 50); // Close range movement
-        } while (Math.abs(newX - yesButton.offsetLeft) < 100 && Math.abs(newY - yesButton.offsetTop) < 100);
+            attempts++;
+        } while (attempts < maxAttempts && (Math.abs(newX - yesButton.offsetLeft) <= yesButton.offsetWidth && 
+                 Math.abs(newY - yesButton.offsetTop) <= yesButton.offsetHeight));
         
         noButton.style.left = newX + 'px';
         noButton.style.top = newY + 'px';
