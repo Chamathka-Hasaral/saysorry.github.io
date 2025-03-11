@@ -81,19 +81,36 @@
 <script>
     const noButton = document.getElementById('noButton');
     const yesButton = document.getElementById('yesButton');
-    let initialNoPosition = {left: noButton.offsetLeft, top: noButton.offsetTop};
+    const messageDiv = document.getElementById('message');
+    const messages = [
+        "Please forgive me, my love.",
+        "I was wrong, and I'm so sorry.",
+        "Can we please talk it over?",
+        "I miss us. Let's reconcile, please.",
+        "My heart aches without you."
+    ];
+    let messageIndex = 0;
 
     function moveButton() {
-        let newX, newY, maxAttempts = 10, attempts = 0;
+        let newX, newY;
         do {
-            newX = initialNoPosition.left + (Math.random() * 100 - 50); // Close range movement
-            newY = initialNoPosition.top + (Math.random() * 100 - 50); // Close range movement
-            attempts++;
-        } while (attempts < maxAttempts && (Math.abs(newX - yesButton.offsetLeft) <= yesButton.offsetWidth && 
-                 Math.abs(newY - yesButton.offsetTop) <= yesButton.offsetHeight));
+            newX = Math.random() * (window.innerWidth - noButton.clientWidth);
+            newY = Math.random() * (window.innerHeight - noButton.clientHeight);
+        } while (checkOverlap(newX, newY, yesButton));
         
         noButton.style.left = newX + 'px';
         noButton.style.top = newY + 'px';
+
+        // Update message
+        messageIndex = (messageIndex + 1) % messages.length;
+        messageDiv.innerText = messages[messageIndex];
+    }
+
+    function checkOverlap(x, y, button) {
+        return (x < button.offsetLeft + button.offsetWidth &&
+                x + noButton.offsetWidth > button.offsetLeft &&
+                y < button.offsetTop + button.offsetHeight &&
+                y + noButton.offsetHeight > button.offsetTop);
     }
 
     function handleYes() {
@@ -105,7 +122,7 @@
 
     function bloomHeartsForever() {
         setInterval(() => {
-            for (let i = 0; i < 20; i++) { // More hearts for a dramatic effect
+            for (let i = 0; i < 20; i++) {
                 let heart = document.createElement('div');
                 heart.classList.add('heart');
                 heart.style.left = Math.random() * window.innerWidth + 'px';
@@ -115,7 +132,7 @@
                     document.body.removeChild(heart);
                 }, 2000);
             }
-        }, 1000); // Increase frequency of heart generation
+        }, 1000);
     }
 </script>
 </body>
