@@ -31,7 +31,8 @@
         color: white; 
         box-shadow: 0 3px #ff496c; 
         margin: 5px;
-        position: relative;
+        position: absolute;
+        transition: top 0.5s, left 0.5s;
     }
     button:hover {
         background-color: #ff496c;
@@ -91,26 +92,35 @@
     ];
     let messageIndex = 0;
 
+    window.onload = () => {
+        const messageRect = messageDiv.getBoundingClientRect();
+        noButton.style.top = messageRect.bottom + 10 + 'px';
+        yesButton.style.top = messageRect.bottom + 10 + 'px';
+        noButton.style.left = (messageRect.left + messageRect.width / 2 - noButton.offsetWidth - 20) + 'px';
+        yesButton.style.left = (messageRect.left + messageRect.width / 2 + 20) + 'px';
+    };
+
     function moveButton() {
         let newX, newY;
+        const minimumDistance = 150; 
         do {
-            newX = Math.random() * (window.innerWidth - noButton.clientWidth);
-            newY = Math.random() * (window.innerHeight - noButton.clientHeight);
-        } while (checkOverlap(newX, newY, yesButton));
-        
-        noButton.style.left = newX + 'px';
-        noButton.style.top = newY + 'px';
+            newX = Math.random() * (window.innerWidth - noButton.offsetWidth);
+            newY = Math.random() * (window.innerHeight - noButton.offsetHeight);
+        } while (!isPositionAcceptable(newX, newY, minimumDistance));
 
-        // Update message
-        messageIndex = (messageIndex + 1) % messages.length;
+        noButton.style.left = Math.max(0, Math.min(window.innerWidth - noButton.offsetWidth, newX)) + 'px';
+        noButton.style.top = Math.max(0, Math.min(window.innerHeight - noButton.offsetHeight, newY)) + 'px';
+
+        // Update message to cycle through
         messageDiv.innerText = messages[messageIndex];
+        messageIndex = (messageIndex + 1) % messages.length;
     }
 
-    function checkOverlap(x, y, button) {
-        return (x < button.offsetLeft + button.offsetWidth &&
-                x + noButton.offsetWidth > button.offsetLeft &&
-                y < button.offsetTop + button.offsetHeight &&
-                y + noButton.offsetHeight > button.offsetTop);
+    function isPositionAcceptable(x, y, minDistance) {
+        const yesRect = yesButton.getBoundingClientRect();
+        const dx = Math.abs(yesRect.left + yesButton.offsetWidth / 2 - (x + noButton.offsetWidth / 2));
+        const dy = Math.abs(yesRect.top + yesButton.offsetHeight / 2 - (y + noButton.offsetHeight / 2));
+        return Math.sqrt(dx * dx + dy * dy) >= minDistance;
     }
 
     function handleYes() {
